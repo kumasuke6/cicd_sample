@@ -15,7 +15,7 @@ phases:
       - echo ${DOCKER_HUB_TOKEN} | docker login -u ${DOCKER_HUB_NAME} --password-stdin
       - ls -la
       - docker-compose up -d
-      # - docker-compose exec -T cicd_test_app go test -v -cover || exit
+      - docker-compose exec -T cicd_test_app go test -v -cover || exit
   post_build:
     commands:
       - echo Build completed on `date`
