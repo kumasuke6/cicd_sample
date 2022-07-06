@@ -2,8 +2,6 @@ version: 0.2
 
 phases:
   install:
-    runtime-versions:
-      docker: 18
     commands:
       - yum install -y git
   pre_build:
