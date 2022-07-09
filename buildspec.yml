@@ -9,15 +9,17 @@ phases:
       - echo Nothing to do in the pre_build phase..
   build:
     commands:
-      - echo Build started on `date`
+      - echo ビルドスタート
+      # docker imageの取得制限にひっかかるため、docker loginをする。
       - echo ${DOCKER_HUB_TOKEN} | docker login -u ${DOCKER_HUB_NAME} --password-stdin
       - ls -la
       - docker-compose up -d
       - docker-compose exec -T cicd_test_app go test -v -cover || exit
+      - env GOOS=linux GOARCH=amd64 go build main.go
   post_build:
     commands:
       - echo Build completed on `date`
 artifacts:
     files:
-        - '**/*'
+        - './main'
       
