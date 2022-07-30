@@ -6,14 +6,22 @@ phases:
       - yum install -y git
   pre_build:
     commands:
-      - echo Nothing to do in the pre_build phase...
+      - echo pre_build start
+      # docker imageの取得制限にひっかかるため、docker loginをする。
+      - echo ${DOCKER_HUB_TOKEN} | docker login -u ${DOCKER_HUB_NAME} --password-stdin
+      # コンテナ内でテストを実施
+      - docker-compose up -d
+      - docker-compose exec -T cicd_test_app go test -v -cover || exit
   build:
     commands:
-      - echo Build started on `date`
-      - echo ${DOCKER_HUB_TOKEN} | docker login -u ${DOCKER_HUB_NAME} --password-stdin
-      - ls -la
-      - docker-compose up -d
+      - echo build start
+      # ビルド
+      - env GOOS=linux GOARCH=amd64 go build main.go
   post_build:
     commands:
       - echo Build completed on `date`
+# 成果物をS3に保存する
+artifacts:
+    files:
+        - './main'
       
